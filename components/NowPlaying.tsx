@@ -9,19 +9,27 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   albumImageUrl,
   title,
   artist,
+  songUrl,
 }) => {
   return (
     <>
       {isPlaying && (
         <section className="flex ">
-          <img
-            src={albumImageUrl}
-            className="rounded-xl"
-            alt={`Album cover for ${title} by ${artist}. From the album ${album}`}
-            title={`Album cover for ${title} by ${artist}. From the album ${album}`}
-          />
+          <figure>
+            <a href={songUrl} target="_blank">
+              <img
+                src={albumImageUrl}
+                className="rounded-xl"
+                alt={`Album cover for ${title} by ${artist}. From the album ${album}`}
+                title={`Album cover for ${title} by ${artist}. From the album ${album}`}
+              />
+            </a>
+            <figcaption className="text-2xl text-center dark:text-yellow-600">
+              {album}
+            </figcaption>
+          </figure>
           <h1 className="my-24 text-6xl font-black tracking-tight text-center dark:text-yellow-500">
-            Now Playing {title}
+            {artist} - {title}
           </h1>
         </section>
       )}
