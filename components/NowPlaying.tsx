@@ -32,7 +32,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
               target="_blank"
               className="hover:underline hover:text-yellow-600"
             >
-              <h1 className="my-24 text-6xl font-black tracking-tight text-center dark:text-yellow-500">
+              <h1 className="my-24 text-4xl font-black tracking-tight text-center md:text-6xl dark:text-yellow-500">
                 {artist} - {title}
               </h1>
             </a>
