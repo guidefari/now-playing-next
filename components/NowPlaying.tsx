@@ -1,6 +1,4 @@
 import React from 'react'
-import useSWR from 'swr'
-import fetcher from '../lib/fetcher'
 import { NowPlayingProps } from '../lib/types'
 
 const NowPlaying: React.FC<NowPlayingProps> = ({
@@ -14,7 +12,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   return (
     <>
       {isPlaying && (
-        <section className="flex ">
+        <section className="flex flex-col space-x-7 md:flex-row">
           <figure>
             <a href={songUrl} target="_blank">
               <img

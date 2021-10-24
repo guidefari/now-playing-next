@@ -12,7 +12,7 @@ function Homepage(): JSX.Element {
 
   return (
     <>
-      <h1 className="mb-24 text-6xl font-black tracking-tight text-center dark:text-yellow-500">
+      <h1 className="mb-24 text-6xl font-black tracking-tight text-center text-yellow-500">
         Now Playing{' '}
       </h1>
       <NowPlaying
