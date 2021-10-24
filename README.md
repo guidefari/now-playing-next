@@ -4,6 +4,7 @@
 # resources used
 - couldn't have done this so rapidly without [Leerob's](https://leerob.io/snippets/spotify) article.
 - using [SWR](https://leerob.io/blog/fetching-data-with-swr#consuming-the-data)
+- [leerob](https://github.com/leerob/leerob.io) - personal site source code. another useful reference
 
 # todo
 - [ ] handle nothing being played
