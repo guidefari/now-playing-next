@@ -72,6 +72,18 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@effect/data@^0.12.2", "@effect/data@~0.12.2":
+  version "0.12.2"
+  resolved "https://npm.test.flexperto.com/@effect%2fdata/-/data-0.12.2.tgz#c76ce6e9f92484e77f184f3392724f7729f6467d"
+  integrity sha512-bmWRTcsSRG1FlBswT+D8SxW6r3c4B3pKJrjYfitCD03tXHnup5gLHaWqbFgIjiyYITS+UsJRRjVrNxvyGG4ZNQ==
+
+"@effect/io@^0.25.10":
+  version "0.25.10"
+  resolved "https://npm.test.flexperto.com/@effect%2fio/-/io-0.25.10.tgz#802a3e55e22efb3ba96f4a207f1ecbe7249c44ca"
+  integrity sha512-hDgm6L2QKO+ML3s7irvKD78lq7n8HXJ9AnDjSG8nRF3rKaTh9MAwI8RN05Yd0qgGo9iXe93RSaWzO2+Xn/0WWg==
+  dependencies:
+    "@effect/data" "~0.12.2"
+
 "@eslint/eslintrc@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.0.3.tgz#41f08c597025605f672251dcc4e8be66b5ed7366"

@@ -35,7 +35,7 @@ export const getNowPlaying = async () => {
     },
   })
 }
-export const getAudioFeatures = async (id: number) => {
+export const getAudioFeatures = async (id: string) => {
   const { access_token } = await getAccessToken()
 
   return fetch(`${TRACK_FEATURES_ENDPOINT}/${id}`, {
