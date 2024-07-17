@@ -1,5 +1,5 @@
-import React from 'react'
-import { NowPlayingProps } from '../lib/types'
+import type React from "react";
+import type { NowPlayingProps } from "../types";
 
 const NowPlaying: React.FC<NowPlayingProps> = ({
   album,
@@ -8,13 +8,14 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   title,
   artist,
   songUrl,
+  contextUrl,
 }) => {
   return (
     <>
       {isPlaying && (
         <section className="flex flex-col space-x-7 md:flex-row">
           <figure>
-            <a href={songUrl} target="_blank">
+            <a href={songUrl} target="_blank" rel="noreferrer">
               <img
                 src={albumImageUrl}
                 className="rounded-xl"
@@ -23,24 +24,20 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
               />
             </a>
             <figcaption className="text-2xl font-black text-center dark:text-yellow-600">
-              {album}
+              <a href={contextUrl}>{album}</a>
             </figcaption>
           </figure>
           <aside>
-            <a
-              href={songUrl}
-              target="_blank"
-              className="hover:underline hover:text-yellow-600"
-            >
-              <h1 className="my-24 text-4xl font-black tracking-tight text-center md:text-6xl dark:text-yellow-500">
-                {artist} - {title}
-              </h1>
-            </a>
+            <h1 className="my-24 text-4xl font-black tracking-tight text-left md:text-6xl dark:text-yellow-500">
+              {artist} - {title}
+            </h1>
+            <button type="button">Copy title to clipboard</button>
+            <button type="button">Copy spotify link clipboard</button>
           </aside>
         </section>
       )}
     </>
-  )
-}
+  );
+};
 
-export default NowPlaying
+export default NowPlaying;
