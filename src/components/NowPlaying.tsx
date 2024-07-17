@@ -1,7 +1,10 @@
 import type React from "react";
 import type { NowPlayingProps } from "../types";
+import { LuClipboardType } from "react-icons/lu";
+import { CopyToClipBoard } from "./CopyToClipboard";
+import { FaLink } from "react-icons/fa6";
 
-const NowPlaying: React.FC<NowPlayingProps> = ({
+const NowPlaying = ({
   album,
   isPlaying,
   albumImageUrl,
@@ -9,7 +12,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   artist,
   songUrl,
   contextUrl,
-}) => {
+}: NowPlayingProps) => {
   return (
     <>
       {isPlaying && (
@@ -23,18 +26,20 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
                 title={`Album cover for ${title} by ${artist}. From the album ${album}`}
               />
             </a>
-            <figcaption className="text-2xl font-black text-center dark:text-yellow-600">
+            <figcaption className="text-2xl font-black text-center text-yellow-600">
               <a href={contextUrl}>{album}</a>
             </figcaption>
           </figure>
           <aside>
-            <h1 className="my-24 text-4xl font-black tracking-tight text-left md:text-6xl dark:text-yellow-500">
-              {artist} - {title}
+            <div className="flex space-x-3">
+            <CopyToClipBoard RenderComponent={<LuClipboardType className="clipboard-icon"/>} title="Copy title to clipboard" stringToCopy={`${artist} - ${title}`} />
+              <CopyToClipBoard RenderComponent={<FaLink className="clipboard-icon"/>} title="Copy spotify link clipboard" stringToCopy={songUrl} />
+          </div>
+            <h1 className="text-4xl font-black tracking-tight text-left md:text-6xl text-yellow-500">
+            {artist} - {title}
             </h1>
-            <button type="button">Copy title to clipboard</button>
-            <button type="button">Copy spotify link clipboard</button>
           </aside>
-        </section>
+      </section>        
       )}
     </>
   );
