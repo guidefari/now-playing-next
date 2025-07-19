@@ -1,3 +1,4 @@
+"use client";
 import {
 	Tooltip,
 	TooltipContent,
@@ -38,7 +39,7 @@ export const CopyToClipBoard = ({
 						handleCopyToClipboard(stringToCopy);
 					}}
 				>
-					<div className="flex h-5 w-5 items-center justify-center">
+					<div className="flex justify-center items-center w-5 h-5">
 						{isCopied ? (
 							<CheckIcon className="clipboard-icon" />
 						) : (
