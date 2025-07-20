@@ -1,13 +1,10 @@
 import Image from "next/image";
-import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaCopy, FaLink, FaPause, FaPlay } from "react-icons/fa6";
-import { LuClipboardType } from "react-icons/lu";
+import { FaCopy, FaLink } from "react-icons/fa6";
 import { SiSpotify } from "react-icons/si";
 import { toast } from "sonner";
 import { handleCopyToClipboard } from "@/lib/utils";
 import type { NowPlayingProps } from "../types";
-import { CopyToClipBoard } from "./CopyToClipboard";
 import {
 	Tooltip,
 	TooltipContent,
@@ -22,8 +19,10 @@ import {
 } from "./ui/dropdown-menu";
 
 const NowPlaying = ({ data }: { data: NowPlayingProps }) => {
-	console.log("bgColors:", data.bgColors);
 	const mainDivRef = useRef<HTMLDivElement>(null);
+	const [currentProgress, setCurrentProgress] = useState(data.progressMs);
+	const [isPlaying, setIsPlaying] = useState(data.isPlaying);
+	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
 	const playerStyle = useMemo(() => {
 		return {
@@ -38,11 +37,18 @@ const NowPlaying = ({ data }: { data: NowPlayingProps }) => {
 		const grayBase = "rgb(128, 128, 128)";
 		const colorInfluence = data.bgColors.map((color) => color).join(", ");
 
+		if (!data.isPlaying) {
+			return {
+				background: "black",
+				backdropFilter: "blur(40px)",
+			};
+		}
+
 		return {
 			background: `linear-gradient(to bottom, ${grayBase}, ${colorInfluence})`,
 			backdropFilter: "blur(40px)",
 		};
-	}, [data.bgColors]);
+	}, [data.bgColors, data.isPlaying]);
 
 	useEffect(() => {
 		if (data.bgColors.length > 0) {
@@ -52,6 +58,51 @@ const NowPlaying = ({ data }: { data: NowPlayingProps }) => {
 			body.style.backdropFilter = bodyStyle.backdropFilter;
 		}
 	}, [bodyStyle, data.bgColors]);
+
+	useEffect(() => {
+		setCurrentProgress(data.progressMs);
+		setIsPlaying(data.isPlaying);
+
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+
+		if (data.isPlaying && data.progressMs < data.durationMs) {
+			const startTime = Date.now() - data.progressMs;
+
+			intervalRef.current = setInterval(() => {
+				const elapsed = Date.now() - startTime;
+
+				if (elapsed >= data.durationMs) {
+					setCurrentProgress(data.durationMs);
+					setIsPlaying(false);
+					if (intervalRef.current) {
+						clearInterval(intervalRef.current);
+						intervalRef.current = null;
+					}
+				} else {
+					setCurrentProgress(elapsed);
+				}
+			}, 1000);
+		}
+
+		return () => {
+			if (intervalRef.current) {
+				clearInterval(intervalRef.current);
+				intervalRef.current = null;
+			}
+		};
+	}, [data.progressMs, data.durationMs, data.isPlaying]);
+
+	const formatTime = (ms: number) => {
+		const minutes = Math.floor(ms / 1000 / 60);
+		const seconds = Math.floor((ms / 1000) % 60);
+		return `${minutes}:${String(seconds).padStart(2, "0")}`;
+	};
+
+	const progressPercentage = (currentProgress / data.durationMs) * 100;
+	const remainingTime = data.durationMs - currentProgress;
 
 	return (
 		<>
@@ -133,31 +184,17 @@ const NowPlaying = ({ data }: { data: NowPlayingProps }) => {
 						<div className="w-full my-2 relative">
 							<div className="w-full h-2 bg-gray-200 rounded-full relative">
 								<div
-									className="h-full bg-gray-300 rounded-full relative"
+									className="h-full bg-gray-300 rounded-full relative transition-all duration-1000 ease-linear"
 									style={{
-										width: `${(data.progressMs / data.durationMs) * 100}%`,
+										width: `${progressPercentage}%`,
 									}}
 								>
 									<div className="absolute -right-1 -top-0.5 w-3 h-3 bg-gray-400 rounded-full shadow-sm"></div>
 								</div>
 							</div>
-							<div className="flex justify-between mt-2  text-xs">
-								<span>
-									{Math.floor(data.progressMs / 1000 / 60)}:
-									{String(Math.floor((data.progressMs / 1000) % 60)).padStart(
-										2,
-										"0",
-									)}
-								</span>
-								<span>
-									-{Math.floor((data.durationMs - data.progressMs) / 1000 / 60)}
-									:
-									{String(
-										Math.floor(
-											((data.durationMs - data.progressMs) / 1000) % 60,
-										),
-									).padStart(2, "0")}
-								</span>
+							<div className="flex justify-between mt-2 text-xs">
+								<span>{formatTime(currentProgress)}</span>
+								<span>-{formatTime(remainingTime)}</span>
 							</div>
 						</div>
 					</div>
