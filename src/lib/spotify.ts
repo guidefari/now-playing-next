@@ -1,6 +1,7 @@
 import querystring from "node:querystring";
 import type { NowPlayingProps, NowPlayingResponse } from "@/types";
 import fetcher from "./fetcher";
+import { getImageColors } from "./getColors";
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -59,6 +60,9 @@ export const getNowPlaying = async (): Promise<NowPlayingProps> => {
 		},
 	});
 
+	const colors = await getImageColors(data.item.album.images[0].url);
+	console.log("colors:", colors);
+
 	return {
 		album: data.item.album.name,
 		albumImageUrl: data.item.album.images[0].url,
@@ -67,6 +71,9 @@ export const getNowPlaying = async (): Promise<NowPlayingProps> => {
 		isPlaying: data.is_playing,
 		songUrl: data.item.external_urls.spotify,
 		title: data.item.name,
+		solidBgColor: colors.solidBgColor,
+		bgColors: colors.bgColors,
+		textColor: colors.textColor,
 	};
 };
 export const getAudioFeatures = async (id: number) => {
