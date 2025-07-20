@@ -96,7 +96,7 @@ const NowPlaying = ({
 					className="min-h-dvh p-4 relative overflow-hidden"
 					style={getBackgroundStyle()}
 				>
-					<div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+					{/* <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div> */}
 					<div className="relative z-10 grid grid-rows-12 h-full rounded-xl  backdrop-blur-md">
 						<div className="row-span-1 flex items-center justify-center"></div>
 						<div className="row-span-5 flex items-center justify-center p-4">
@@ -117,7 +117,7 @@ const NowPlaying = ({
 						</div>
 						<div className="row-span-1 flex items-center justify-center">
 							<h1
-								className="tracking-tight text-center text-2xl md:text-4xl drop-shadow-lg"
+								className="tracking-tight text-left text-2xl md:text-4xl drop-shadow-lg"
 								style={{ color: colors.text?.[0] ?? "white" }}
 							>
 								{artist} - {title}

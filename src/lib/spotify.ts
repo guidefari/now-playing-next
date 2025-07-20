@@ -1,4 +1,6 @@
 import querystring from "node:querystring";
+import type { NowPlayingProps, NowPlayingResponse } from "@/types";
+import fetcher from "./fetcher";
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -48,14 +50,24 @@ const getAccessToken = async () => {
 	return data;
 };
 
-export const getNowPlaying = async () => {
+export const getNowPlaying = async (): Promise<NowPlayingProps> => {
 	const { access_token } = await getAccessToken();
 
-	return fetch(NOW_PLAYING_ENDPOINT, {
+	const data = await fetcher<NowPlayingResponse>(NOW_PLAYING_ENDPOINT, {
 		headers: {
 			Authorization: `Bearer ${access_token}`,
 		},
 	});
+
+	return {
+		album: data.item.album.name,
+		albumImageUrl: data.item.album.images[0].url,
+		contextUrl: data.item.album.external_urls.spotify,
+		artist: data.item.artists.map((_artist) => _artist.name).join(", "),
+		isPlaying: data.is_playing,
+		songUrl: data.item.external_urls.spotify,
+		title: data.item.name,
+	};
 };
 export const getAudioFeatures = async (id: number) => {
 	const { access_token } = await getAccessToken();
