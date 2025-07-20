@@ -9,9 +9,12 @@ const refresh_token = process.env.SPOTIFY_REFRESH_TOKEN;
 
 const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
 
-const NOW_PLAYING_ENDPOINT = `https://api.spotify.com/v1/me/player/currently-playing`;
-const TRACK_FEATURES_ENDPOINT = `https://api.spotify.com/v1/audio-features/`;
-const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
+const endpoints = {
+	NowPlaying: "https://api.spotify.com/v1/me/player/currently-playing",
+	TrackFeatures: "https://api.spotify.com/v1/audio-features/",
+	Token: "https://accounts.spotify.com/api/token",
+	Queue: "https://api.spotify.com/v1/me/player/queue",
+} as const;
 
 interface TokenCache {
 	access_token: string;
@@ -28,7 +31,7 @@ const getAccessToken = async () => {
 		return { access_token: tokenCache.access_token };
 	}
 
-	const response = await fetch(TOKEN_ENDPOINT, {
+	const response = await fetch(endpoints.Token, {
 		method: "POST",
 		headers: {
 			Authorization: `Basic ${basic}`,
@@ -54,7 +57,7 @@ const getAccessToken = async () => {
 export const getNowPlaying = async (): Promise<NowPlayingProps> => {
 	const { access_token } = await getAccessToken();
 
-	const data = await fetcher<NowPlayingResponse>(NOW_PLAYING_ENDPOINT, {
+	const data = await fetcher<NowPlayingResponse>(endpoints.NowPlaying, {
 		headers: {
 			Authorization: `Bearer ${access_token}`,
 		},
@@ -74,14 +77,28 @@ export const getNowPlaying = async (): Promise<NowPlayingProps> => {
 		solidBgColor: colors.solidBgColor,
 		bgColors: colors.bgColors,
 		textColor: colors.textColor,
+		durationMs: data.item.duration_ms,
+		progressMs: data.progress_ms,
 	};
 };
 export const getAudioFeatures = async (id: number) => {
 	const { access_token } = await getAccessToken();
 
-	return fetch(`${TRACK_FEATURES_ENDPOINT}/${id}`, {
+	return fetch(`${endpoints.TrackFeatures}/${id}`, {
 		headers: {
 			Authorization: `Bearer ${access_token}`,
 		},
 	});
 };
+
+// export const getQueue = async () => {
+// 	const { access_token } = await getAccessToken();
+
+// 	return fetch(`${NOW_PLAYING_ENDPOINT}/queue`, {
+// 		headers: {
+// 			Authorization: `Bearer ${access_token}`,
+// 		},
+// 	});
+// };
+// export const getPlayHistory = async () => {
+// export const getPlayer

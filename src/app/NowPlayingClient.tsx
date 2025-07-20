@@ -58,19 +58,8 @@ export default function NowPlayingClient({
 	}
 
 	return (
-		<div className="flex justify-center items-center">
-			<NowPlaying
-				isPlaying={data.isPlaying}
-				album={data.album}
-				albumImageUrl={data.albumImageUrl}
-				artist={data.artist}
-				songUrl={data.songUrl}
-				title={data.title}
-				contextUrl={data.contextUrl}
-				solidBgColor={data.solidBgColor}
-				bgColors={data.bgColors}
-				textColor={data.textColor}
-			/>
+		<div className="flex justify-center items-center overflow-hidden">
+			<NowPlaying data={data} />
 		</div>
 	);
 }

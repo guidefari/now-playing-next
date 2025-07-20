@@ -1,82 +1,186 @@
 import Image from "next/image";
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaLink } from "react-icons/fa6";
+import { FaCopy, FaLink, FaPause, FaPlay } from "react-icons/fa6";
 import { LuClipboardType } from "react-icons/lu";
+import { SiSpotify } from "react-icons/si";
+import { toast } from "sonner";
+import { handleCopyToClipboard } from "@/lib/utils";
 import type { NowPlayingProps } from "../types";
 import { CopyToClipBoard } from "./CopyToClipboard";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "./Tooltip";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
-const NowPlaying = ({
-	album,
-	isPlaying,
-	albumImageUrl,
-	title,
-	artist,
-	songUrl,
-	contextUrl,
-	solidBgColor,
-	bgColors,
-	textColor,
-}: NowPlayingProps) => {
-	console.log("bgColors:", bgColors);
+const NowPlaying = ({ data }: { data: NowPlayingProps }) => {
+	console.log("bgColors:", data.bgColors);
 	const mainDivRef = useRef<HTMLDivElement>(null);
 
 	const playerStyle = useMemo(() => {
 		return {
-			background: `linear-gradient(135deg, ${bgColors.map((color) => color).join(", ")})`,
+			background: `linear-gradient(135deg, ${data.bgColors.map((color) => color).join(", ")})`,
 			backdropFilter: "blur(20px)",
 			WebkitBackdropFilter: "blur(20px)",
+			color: data.textColor,
 		};
-	}, [bgColors]);
+	}, [data.bgColors, data.textColor]);
 
 	const bodyStyle = useMemo(() => {
 		const grayBase = "rgb(128, 128, 128)";
-		const colorInfluence = bgColors.map((color) => color).join(", ");
+		const colorInfluence = data.bgColors.map((color) => color).join(", ");
 
 		return {
 			background: `linear-gradient(to bottom, ${grayBase}, ${colorInfluence})`,
 			backdropFilter: "blur(40px)",
 		};
-	}, [bgColors]);
+	}, [data.bgColors]);
 
 	useEffect(() => {
-		if (bgColors.length > 0) {
+		if (data.bgColors.length > 0) {
 			const body = document.body;
 
 			body.style.background = bodyStyle.background;
 			body.style.backdropFilter = bodyStyle.backdropFilter;
 		}
-	}, [bodyStyle, bgColors]);
+	}, [bodyStyle, data.bgColors]);
 
 	return (
 		<>
-			{isPlaying && (
+			{data.isPlaying && (
 				<div
 					ref={mainDivRef}
-					className="px-4 h-dvh w-full relative overflow-hidden gap-4 lg:max-w-xl grid grid-rows-12  backdrop-blur-md"
+					className="px-4 lg:px-8 h-dvh w-full relative gap-4 lg:max-w-xl grid grid-rows-12 backdrop-blur-md"
 					style={playerStyle}
 				>
-					{/* <div className="row-span-1"></div> */}
+					<div className="row-span-1"></div>
 					<div className="row-span-5 flex justify-center items-center">
 						<Image
-							src={albumImageUrl}
+							src={data.albumImageUrl}
 							width={320}
 							height={320}
 							priority
 							className="rounded-xl shadow-2xl"
-							alt={`Album cover for ${title} by ${artist}. From the album ${album}`}
-							title={`Album cover for ${title} by ${artist}. From the album ${album}`}
+							alt={`Album cover for ${data.title} by ${data.artist}. From the album ${data.album}`}
+							title={`Album cover for ${data.title} by ${data.artist}. From the album ${data.album}`}
 						/>
 					</div>
-					<div className="row-span-1 ">
-						<h1
-							className="tracking-tight text-left drop-shadow-lg"
-							style={{ color: textColor }}
-						>
-							{artist} - {title}
-						</h1>
+					<div className="row-span-2 flex flex-col gap-2 relative">
+						<div className="flex justify-between items-start">
+							<div className="flex-1">
+								<h1 className="tracking-tight text-left text-lg drop-shadow-lg relative">
+									{data.title}
+								</h1>
+								<h3 className="text-sm">{data.artist}</h3>
+							</div>
+							<div className="relative">
+								<DropdownMenu modal={false}>
+									<DropdownMenuTrigger asChild>
+										<button
+											type="button"
+											className="p-1 hover:bg-white/10 rounded-full transition-colors"
+											aria-label="More options"
+										>
+											<svg
+												width="16"
+												height="16"
+												viewBox="0 0 24 24"
+												fill="currentColor"
+												aria-hidden="true"
+											>
+												<circle cx="12" cy="12" r="2" />
+												<circle cx="4" cy="12" r="2" />
+												<circle cx="20" cy="12" r="2" />
+											</svg>
+										</button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent
+										align="end"
+										side="top"
+										className="w-48"
+										sideOffset={8}
+									>
+										<DropdownMenuItem
+											onClick={() => {
+												handleCopyToClipboard(data.songUrl);
+												toast.success("Track URL copied to clipboard");
+											}}
+										>
+											<FaLink className="mr-2 h-4 w-4" />
+											Copy track URL
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											onClick={() => {
+												handleCopyToClipboard(data.title);
+												toast.success("Track title copied to clipboard");
+											}}
+										>
+											<FaCopy className="mr-2 h-4 w-4" />
+											Copy track title
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</div>
+						</div>
+						<div className="w-full my-2 relative">
+							<div className="w-full h-2 bg-gray-200 rounded-full relative">
+								<div
+									className="h-full bg-gray-300 rounded-full relative"
+									style={{
+										width: `${(data.progressMs / data.durationMs) * 100}%`,
+									}}
+								>
+									<div className="absolute -right-1 -top-0.5 w-3 h-3 bg-gray-400 rounded-full shadow-sm"></div>
+								</div>
+							</div>
+							<div className="flex justify-between mt-2  text-xs">
+								<span>
+									{Math.floor(data.progressMs / 1000 / 60)}:
+									{String(Math.floor((data.progressMs / 1000) % 60)).padStart(
+										2,
+										"0",
+									)}
+								</span>
+								<span>
+									-{Math.floor((data.durationMs - data.progressMs) / 1000 / 60)}
+									:
+									{String(
+										Math.floor(
+											((data.durationMs - data.progressMs) / 1000) % 60,
+										),
+									).padStart(2, "0")}
+								</span>
+							</div>
+						</div>
 					</div>
-					<div className="row-span-2 "></div>
+					<div className="row-span-1 items-center flex justify-center text-5xl lg:text-7xl">
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										type="button"
+										onClick={() => {
+											window.open(data.songUrl, "_blank");
+										}}
+										className="hover:scale-110 hover:text-green-400 transition-transform duration-200"
+									>
+										<SiSpotify className="cursor-pointer" />
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Stream on Spotify</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
 					<div className="row-span-3 "></div>
 				</div>
 			)}

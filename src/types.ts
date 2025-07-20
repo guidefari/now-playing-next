@@ -9,6 +9,8 @@ export type NowPlayingProps = {
 	solidBgColor: string;
 	bgColors: string[];
 	textColor: string;
+	durationMs: number;
+	progressMs: number;
 };
 
 export type NowPlayingResponse = {

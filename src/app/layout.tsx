@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { TanStackQueryProvider } from "./providers";
+import { ClientProviders } from "./providers";
 
 const jetBrainsMono = JetBrains_Mono({ subsets: ["latin"] });
 
@@ -18,9 +18,9 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={jetBrainsMono.className}>
-				<TanStackQueryProvider>
+				<ClientProviders>
 					<main>{children}</main>
-				</TanStackQueryProvider>
+				</ClientProviders>
 			</body>
 		</html>
 	);
